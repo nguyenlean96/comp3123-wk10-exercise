@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 const log = whatever => console.log(whatever);
 
 const INITIAL_VALUE = {
@@ -75,27 +76,9 @@ export default class FormEntry extends React.Component {
         }));
         log(this.state);
     }
-    onViewInvoke = event => {
-        event.preventDefault();
-        log(event.target.value);
-        let id = event.target.value;
-        this.setState({view: {id: id,
-            data: this.state.records[id]}});
-    }
     onValueChanged = event => {
         event.preventDefault();
-        if (event.target.name === "agreement") {
-            let current_state=this.state.form.agreement;
-            this.setState(
-                {
-                    form: {
-                        [event.target.name]: !(current_state)
-                    }
-                }
-            );
-        } else {
-            this.setState({form: {[event.target.name]: event.target.value}})
-        }
+        this.setState({form: {[event.target.name]: event.target.value}})
     }
     
     render() {
@@ -157,15 +140,14 @@ export default class FormEntry extends React.Component {
                             </div>
                         </div>
                         <div>
-                            <div className='form-check'>
-                                <input className='form-check-input' type="checkbox" onChange={e => this.onValueChanged(e)} name="agreement" checked={this.state.form.agreement} id="agreed_check" />
-                                <label class="form-check-label" htmlFor="agreed_check">
-                                <a>Agree Terms and Condition</a>
-                                </label>
-                            </div>
+                            <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                                <Form.Check type="checkbox" onChange={() => {
+                                    this.setState({form: {agreement: !this.state.form.agreement}});
+                                }} checked={this.state.form.agreement} label="Agree Terms and Condition" />
+                            </Form.Group>
                         </div>
                         <div className='d-flex justify-content-center'>
-                            <button onClick={e => this.onSubmitForm(e)} className='btn btn-primary me-2 col-3' type="submit">Submit</button>
+                            <button onClick={e => this.onSubmitForm(e)} className={'btn btn-primary me-2 col-3'} type="submit" disabled={!this.state.form.agreement}>Submit</button>
                             <button onClick={this.onClearForm} className='btn btn-secondary col-2' type="reset">Clear</button>
                         </div>
                     </form>
